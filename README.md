@@ -1,1 +1,9 @@
-# facialexpressiondetection_ai
+# AI
+본 프로젝트는 면접 분석과 자소서 분석 기능으로 구성되어 있다.
+
+interview/
+    시선 분석 및 표정 분석을 통해 면접 태도를 분석
+
+resume-analysis/
+    합격자 자소서를 기반으로 핵심 역량 패턴을 추출하고
+    사용자 자소서의 역량을 분석
