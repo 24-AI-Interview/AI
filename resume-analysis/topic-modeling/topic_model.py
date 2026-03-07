@@ -6,10 +6,12 @@ from hdbscan import HDBSCAN
 
 # 데이터 로드
 df = pd.read_csv("../data/processed_resume_data.csv")
-docs = df["text"].tolist()
+
+# Answer 기준 topic modeling
+docs = df["Answer"].astype(str).tolist()
 
 # embedding 로드
-embeddings = np.load("../data/resume_embeddings.npy")
+embeddings = np.load("../data/resume_answer_embeddings.npy")
 
 print("문서 개수:", len(docs))
 print("embedding shape:", embeddings.shape)
@@ -59,6 +61,7 @@ print("노이즈 비율:", round(noise_ratio, 3))
 
 # 토픽 정보 저장
 topic_info.to_csv("../data/topic_info_final.csv", index=False)
+
 # 모델 저장
 topic_model.save("../data/bertopic_model_final")
 

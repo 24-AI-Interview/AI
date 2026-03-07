@@ -1,13 +1,18 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from sentence_transformers import SentenceTransformer
 
 # 데이터 로드
 df = pd.read_csv("../data/processed_resume_data.csv")
-docs = df["text"].tolist()
+docs = df["Answer"].astype(str).tolist()
+questions = df["Question"].astype(str).tolist()
 
-# embedding 로드
-embeddings = np.load("../data/resume_embeddings.npy")
+# embedding 로드 (Answer embedding)
+embeddings = np.load("../data/resume_answer_embeddings.npy")
+
+# query용 모델
+model = SentenceTransformer("snunlp/KR-SBERT-V40K-klueNLI-augSTS")
 
 print("문서 개수:", len(docs))
 print("embedding shape:", embeddings.shape)
@@ -16,22 +21,28 @@ print("embedding shape:", embeddings.shape)
 query_idx = 100
 
 print("\n==============================")
-print("Query 문장")
+print("Query 질문")
 print("==============================")
-print(docs[query_idx][:500])
+print(questions[query_idx][:500])
+
+# Query embedding 생성
+query_embedding = model.encode(
+    questions[query_idx],
+    convert_to_numpy=True
+)
 
 # cosine similarity
 similarities = cosine_similarity(
-    embeddings[query_idx].reshape(1, -1),
+    query_embedding.reshape(1, -1),
     embeddings
 )[0]
 
 # 상위 유사 문장
 top_k = 5
-top_indices = similarities.argsort()[-(top_k+1):-1][::-1]
+top_indices = similarities.argsort()[-top_k:][::-1]
 
 print("\n==============================")
-print("유사 문장")
+print("유사 답변")
 print("==============================")
 
 for i in top_indices:
